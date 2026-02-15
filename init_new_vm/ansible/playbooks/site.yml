@@ -119,6 +119,16 @@
         state=directory
         mode=0755
 
+    - name: Create mywebs directory
+      file: path="/opt/install/mywebs"
+        state=directory
+        mode=0755
+
+    - name: Create database directory
+      file: path="/opt/install/database"
+        state=directory
+        mode=0755
+
     - name: Copy files from controller to target
       copy:
         src: "{{ item.src }}"

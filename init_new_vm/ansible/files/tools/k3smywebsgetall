@@ -1,0 +1,15 @@
+#!/bin/bash
+
+COMMAND_TO_EXECUTE="kubectl get all -n mywebs"
+
+if [[ "$1" == "--help" || "$1" == "-h" || "$1" == "--dry" || "$1" == "--dry-run" || "$1" == "-d" ]]; then
+  echo "The script would execute the following command:"
+  echo "$COMMAND_TO_EXECUTE"
+  exit 0
+fi
+
+echo "Getting all my resources: ###########################################"
+echo "$COMMAND_TO_EXECUTE"
+echo "###################################################################"
+
+eval "$COMMAND_TO_EXECUTE"

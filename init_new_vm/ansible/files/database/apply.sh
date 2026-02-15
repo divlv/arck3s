@@ -1,0 +1,3 @@
+#!/bin/bash
+
+# Apply all the database related deployments...

@@ -1,0 +1,56 @@
+#
+# This is Traefik configuration file, which is configured to use Let's Encrypt for SSL certificates.
+# This file will be saved as: /var/lib/rancher/k3s/server/manifests/traefik.yaml
+#
+# /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik # must match the HelmChart name
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    deployment:
+      podAnnotations:
+        prometheus.io/port: "8082"
+        prometheus.io/scrape: "true"
+    providers:
+      kubernetesIngress:
+        publishedService:
+          enabled: true
+    priorityClassName: "system-cluster-critical"
+
+    image:
+      repository: rancher/mirrored-library-traefik
+      tag: 3.3.6
+
+    persistence:
+      enabled: true
+      existingClaim: traefik
+      accessMode: ReadWriteOnce
+      size: 128Mi
+      path: /data
+
+    additionalArguments:
+      - "--certificatesresolvers.prod.acme.email=dima@zaharov.info"
+      - "--certificatesresolvers.prod.acme.storage=/data/acme_prod.json"
+      - "--certificatesresolvers.prod.acme.httpChallenge.entrypoint=web"
+      - "--certificatesresolvers.prod.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.staging.acme.email=dima@zaharov.info"
+      - "--certificatesresolvers.staging.acme.storage=/data/acme_staging.json"
+      - "--certificatesresolvers.staging.acme.httpChallenge.entrypoint=web"
+      - "--certificatesresolvers.staging.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+
+    ports:
+      web:
+        port: 8000
+        exposedPort: 80
+        redirections:
+          entryPoint:
+            to: websecure
+            scheme: https
+            permanent: true
+      websecure:
+        port: 8443
+        exposedPort: 443
+        protocol: TCP

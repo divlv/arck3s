@@ -1,0 +1,17 @@
+#!/bin/bash
+
+COMMAND_TO_EXECUTE="k3s kubectl get pv -o wide"
+
+echo "Getting all persistence values: ###########################################"
+echo "$COMMAND_TO_EXECUTE"
+echo "###########################################################################"
+
+eval "$COMMAND_TO_EXECUTE"
+
+COMMAND_TO_EXECUTE="k3s kubectl get pvc -n mywebs -o wide"
+
+echo "Getting all persistence values claims in MYWEBS: ##########################"
+echo "$COMMAND_TO_EXECUTE"
+echo "###########################################################################"
+
+eval "$COMMAND_TO_EXECUTE"

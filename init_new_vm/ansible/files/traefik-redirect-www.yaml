@@ -1,0 +1,14 @@
+# This YAML file contains rules and settings for Traefik to redirect traffic from non-www to www domains,
+# ensuring consistent URL access and improving SEO.
+# traefik-redirect-www.yaml
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-www
+  namespace: mywebs
+spec:
+  redirectRegex:
+    # “www.” - same host without “www.”, keep https
+    regex: "^https?://www\\.(.+)"
+    replacement: "https://$1"
+    permanent: true # 301

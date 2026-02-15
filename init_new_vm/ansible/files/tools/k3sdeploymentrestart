@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# k3sdeploymentrestart
+# English comment: Tiny helper to perform a zero-downtime rolling restart of a Deployment in the "mywebs" namespace.
+
+###############################################################################
+# Usage examples:
+#   ./k3sdeploymentrestart my-deploy              # immediate restart
+#   ./k3sdeploymentrestart my-deploy --dry-run    # just show the command
+#   ./k3sdeploymentrestart --help                 # usage info
+###############################################################################
+
+# If the first arg looks like a help flag, show usage and exit.
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+  echo "Usage: $0 <deployment-name> [--dry-run|-d]"
+  echo
+  echo "Performs 'k3s kubectl rollout restart deployment <deployment-name> -n mywebs'."
+  echo "Adds --dry-run (or -d) to preview the command without executing it."
+  exit 0
+fi
+
+# Deployment name comes from the first positional parameter.
+DEPLOYMENT_NAME="$1"
+
+# Validate that we actually got a name.
+if [[ -z "$DEPLOYMENT_NAME" ]]; then
+  echo "Error: <deployment-name> is required. Use --help for details." >&2
+  exit 1
+fi
+
+# Optional second argument: --dry-run / -d.
+if [[ "$2" == "--dry-run" || "$2" == "--dry" || "$2" == "-d" ]]; then
+  DRY_RUN=true
+else
+  DRY_RUN=false
+fi
+
+COMMAND_TO_EXECUTE="k3s kubectl rollout restart deployment ${DEPLOYMENT_NAME} -n mywebs"
+
+echo "Rolling restart for deployment '${DEPLOYMENT_NAME}' in namespace 'mywebs':"
+echo "#########################################################################"
+echo "$COMMAND_TO_EXECUTE"
+echo "#########################################################################"
+
+# Only run the command if not a dry-run.
+if [[ "$DRY_RUN" == false ]]; then
+  eval "$COMMAND_TO_EXECUTE"
+  # If you want to block until rollout completes, uncomment:
+  # k3s kubectl rollout status deployment "${DEPLOYMENT_NAME}" -n mywebs
+else
+  echo "(dry-run mode: command was not executed)"
+fi

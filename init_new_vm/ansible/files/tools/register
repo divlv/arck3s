@@ -1,0 +1,50 @@
+#!/bin/bash
+
+echo "###################################################################"
+echo "Registering K3S helper tools..."
+echo "###################################################################"
+
+
+# Don't forget to make the scripts executable via GIT: git add --chmod=+x k3ssonarqubelogs
+# Cleanup part:
+
+# Cleanup the old symbolic links if they exist
+rm -f /usr/bin/tl
+rm -f /usr/bin/pl
+rm -f /usr/bin/showme
+rm -f /usr/bin/showmy
+rm -f /usr/bin/pv
+rm -f /usr/bin/drestart
+rm -f /usr/bin/podlog
+rm -f /usr/bin/podlogs
+
+# Cleanup the old script if it exists
+rm -f /usr/bin/k3straefiklogs
+rm -f /usr/bin/k3postgreslogs
+rm -f /usr/bin/k3smywebsgetall
+rm -f /usr/bin/k3spvpvc
+rm -f /usr/bin/k3sdeploymentrestart
+rm -f /usr/bin/k3spodlogs
+
+
+#################################################
+
+# Create part:
+
+# Copy the new scripts to the /usr/bin directory
+cp /opt/install/tools/k3straefiklogs /usr/bin/k3straefiklogs
+cp /opt/install/tools/k3postgreslogs /usr/bin/k3postgreslogs
+cp /opt/install/tools/k3smywebsgetall /usr/bin/k3smywebsgetall
+cp /opt/install/tools/k3spvpvc /usr/bin/k3spvpvc
+cp /opt/install/tools/k3sdeploymentrestart /usr/bin/k3sdeploymentrestart
+cp /opt/install/tools/k3spodlogs /usr/bin/k3spodlogs
+
+# Create symbolic links for the scripts
+ln -s /usr/bin/k3straefiklogs /usr/bin/tl
+ln -s /usr/bin/k3postgreslogs /usr/bin/pl
+ln -s /usr/bin/k3smywebsgetall /usr/bin/showme
+ln -s /usr/bin/k3smywebsgetall /usr/bin/showmy
+ln -s /usr/bin/k3spvpvc /usr/bin/pv
+ln -s /usr/bin/k3sdeploymentrestart /usr/bin/drestart
+ln -s /usr/bin/k3spodlogs /usr/bin/podlog
+ln -s /usr/bin/k3spodlogs /usr/bin/podlogs

@@ -1,0 +1,24 @@
+# ansible/playbooks/autoexec_bat.yml  —— ТОЛЬКО задачи
+- name: Copy Autoexec.bat file to remote server
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../files/root/autoexec.bat"
+    dest: /root/autoexec.bat
+    mode: "0755"
+
+- name: Autoexec.bat — add cron @reboot
+  ansible.builtin.cron:
+    name: "autoexec.bat"
+    special_time: reboot
+    job: "/root/autoexec.bat"
+
+- name: Remove legacy fake_job_closer (if existed)
+  ansible.builtin.cron:
+    name: fake_job_closer
+    state: absent
+
+- name: All Docker machines — closing cron file properly
+  ansible.builtin.cron:
+    name: fake_job_closer
+    minute: "28"
+    hour: "5"
+    job: "date > /dev/null"

@@ -1,0 +1,11 @@
+- debug:
+      msg: "System tuning..."
+
+- name: Setting LV Timezone (step 1 of 2)
+  file: path=/etc/localtime state=absent
+
+- name: Setting LV Timezone (step 2 of 2)
+  file:
+      src: /usr/share/zoneinfo/Europe/Riga
+      dest: /etc/localtime
+      state: link

@@ -1,0 +1,12 @@
+# GitHub
+repo_version: "main"
+repo_local_path: "/tmp/arck3s"
+repo_https_url: "https://github.com/divlv/arck3s.git"
+# Copy and start
+# file_map:
+#   - src: "init.sh"
+#     dest: "/opt/init.sh"
+#     mode: "0755"
+
+# executables_to_run:
+#   - "/opt/init.sh"

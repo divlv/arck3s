@@ -1,0 +1,13 @@
+---
+- import_playbook: site.yml # site.yml is a standalone playbook
+
+- name: More tweaks & reboot
+  hosts: app
+  become: true
+  gather_facts: false
+
+  tasks:
+    - ansible.builtin.import_tasks: systemtune.yml
+    # - ansible.builtin.import_tasks: googledns.yml
+    - ansible.builtin.import_tasks: autoexec_bat.yml
+    - ansible.builtin.import_tasks: reboot.yml

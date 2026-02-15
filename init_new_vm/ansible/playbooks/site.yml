@@ -1,0 +1,133 @@
+---
+- name: Deploy myk3s (copy real files)
+  hosts: app
+  become: true
+
+  vars:
+    # Full path to the local files to be copied
+    local_base: "{{ playbook_dir }}/../files"
+
+    files_to_deploy:
+      - src: "{{ local_base }}/init.sh"
+        dest: "/opt/install/init.sh"
+        mode: "0755"
+
+      - src: "{{ local_base }}/kuber.sh"
+        dest: "/opt/install/kuber.sh"
+        mode: "0755"
+
+      - src: "{{ local_base }}/traefik-config.yaml"
+        dest: "/opt/install/traefik-config.yaml"
+        mode: "0644"
+
+      - src: "{{ local_base }}/traefik-acme-pv.yaml"
+        dest: "/opt/install/traefik-acme-pv.yaml"
+        mode: "0644"
+
+      - src: "{{ local_base }}/traefik-acme-pvc.yaml"
+        dest: "/opt/install/traefik-acme-pvc.yaml"
+        mode: "0644"
+
+      - src: "{{ local_base }}/traefik-redirect-www.yaml"
+        dest: "/opt/install/traefik-redirect-www.yaml"
+        mode: "0644"
+
+      - src: "{{ local_base }}/root/iptables.sh"
+        dest: "/root/iptables.sh"
+        mode: "0755"
+
+      - src: "{{ local_base }}/root/iptables_open.sh"
+        dest: "/root/iptables_open.sh"
+        mode: "0755"
+
+      - src: "{{ local_base }}/tools/k3straefiklogs"
+        dest: "/opt/install/tools/k3straefiklogs"
+        mode: "0755"
+
+      - src: "{{ local_base }}/tools/k3postgreslogs"
+        dest: "/opt/install/tools/k3postgreslogs"
+        mode: "0755"
+
+      - src: "{{ local_base }}/tools/k3smywebsgetall"
+        dest: "/opt/install/tools/k3smywebsgetall"
+        mode: "0755"
+
+      - src: "{{ local_base }}/tools/k3sdeploymentrestart"
+        dest: "/opt/install/tools/k3sdeploymentrestart"
+        mode: "0755"
+
+      - src: "{{ local_base }}/tools/k3spodlogs"
+        dest: "/opt/install/tools/k3spodlogs"
+        mode: "0755"
+
+      - src: "{{ local_base }}/tools/k3spvpvc"
+        dest: "/opt/install/tools/k3spvpvc"
+        mode: "0755"
+
+      - src: "{{ local_base }}/tools/register"
+        dest: "/opt/install/tools/register"
+        mode: "0755"
+
+      - src: "{{ local_base }}/tools/cleanup_not_ready.sh"
+        dest: "/opt/install/tools/cleanup_not_ready.sh"
+        mode: "0755"
+
+      - src: "{{ local_base }}/mywebs/apply.sh"
+        dest: "/opt/install/mywebs/apply.sh"
+        mode: "0755"
+
+      - src: "{{ local_base }}/mywebs/create_priorities.sh"
+        dest: "/opt/install/mywebs/create_priorities.sh"
+        mode: "0755"
+
+      - src: "{{ local_base }}/mywebs/create_secrets.sh"
+        dest: "/opt/install/mywebs/create_secrets.sh"
+        mode: "0755"
+
+      - src: "{{ local_base }}/mywebs/high-priority.yaml"
+        dest: "/opt/install/mywebs/high-priority.yaml"
+        mode: "0644"
+
+      - src: "{{ local_base }}/mywebs/low-priority.yaml"
+        dest: "/opt/install/mywebs/low-priority.yaml"
+        mode: "0644"
+
+      - src: "{{ local_base }}/database/apply.sh"
+        dest: "/opt/install/database/apply.sh"
+        mode: "0755"
+
+      - src: "{{ local_base }}/database/create_secrets.sh"
+        dest: "/opt/install/database/create_secrets.sh"
+        mode: "0755"
+
+      - src: "{{ local_base }}/database/db-secrets.yaml"
+        dest: "/opt/install/database/db-secrets.yaml"
+        mode: "0644"
+
+    executables_to_run:
+      - "/opt/install/init.sh"
+      - "/opt/install/kuber.sh"
+
+  tasks:
+    - name: Create install directory
+      file: path="/opt/install"
+        state=directory
+        mode=0755
+
+    - name: Create install directory
+      file: path="/opt/install/tools"
+        state=directory
+        mode=0755
+
+    - name: Copy files from controller to target
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        mode: "{{ item.mode }}"
+      loop: "{{ files_to_deploy }}"
+
+    - name: Run uploaded executables
+      shell: "{{ item }}"
+      loop: "{{ executables_to_run }}"
+      args:
+        chdir: "{{ item | dirname }}"

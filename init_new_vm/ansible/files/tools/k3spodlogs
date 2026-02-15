@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# k3spodlogs
+# English comment: Show logs of the first pod whose name starts with the given prefix
+#                  in namespace "mywebs"; optionally follow the log stream (-f).
+
+###############################################################################
+# Usage examples:
+#   ./k3spodlogs forum-memoriali-org          # show current logs once
+#   ./k3spodlogs forum-memoriali-org -f       # follow logs (like tail -f)
+#   ./k3spodlogs --help                       # usage info
+###############################################################################
+
+# Help / usage
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+  echo "Usage: $0 <pod-prefix> [-f|--follow]"
+  echo
+  echo "Finds the first Pod whose name starts with <pod-prefix> in namespace 'mywebs'"
+  echo "and runs: k3s kubectl logs [-f] <pod-name> -n mywebs"
+  exit 0
+fi
+
+# Required positional argument: prefix
+POD_PREFIX="$1"
+if [[ -z "$POD_PREFIX" ]]; then
+  echo "Error: <pod-prefix> is required. Use --help for details." >&2
+  exit 1
+fi
+
+# Optional follow flag
+FOLLOW_FLAG=""
+if [[ "$2" == "-f" || "$2" == "--follow" ]]; then
+  FOLLOW_FLAG="-f"
+fi
+
+# Locate the first matching pod name
+POD_NAME=$(k3s kubectl get pods -n mywebs \
+            -o custom-columns=:metadata.name --no-headers | \
+            grep "^${POD_PREFIX}" | head -n 1)
+
+if [[ -z "$POD_NAME" ]]; then
+  echo "Error: No pod starting with '${POD_PREFIX}' found in namespace 'mywebs'." >&2
+  exit 2
+fi
+
+COMMAND_TO_EXECUTE="k3s kubectl logs ${FOLLOW_FLAG} ${POD_NAME} -n mywebs"
+
+echo "Showing logs for pod '${POD_NAME}' in namespace 'mywebs':"
+echo "#########################################################################"
+echo "$COMMAND_TO_EXECUTE"
+echo "#########################################################################"
+
+# Execute the command
+eval "$COMMAND_TO_EXECUTE"

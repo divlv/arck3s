@@ -1,0 +1,15 @@
+#
+# This file creates a PersistentVolume for Traefik to store ACME certificates.
+#
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: traefik-acme-pv
+spec:
+  capacity:
+    storage: 128Mi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /opt/traefik-data

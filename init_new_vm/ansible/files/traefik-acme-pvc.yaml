@@ -1,0 +1,16 @@
+#
+# This file bounds the PersistentVolume to the PersistentVolumeClaim to be used by Traefik for ACME certificates.
+#
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 128Mi
+  storageClassName: "" # <<< This is important to set to empty string
+  volumeName: traefik-acme-pv

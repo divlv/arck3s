@@ -1,22 +1,41 @@
 - debug:
       msg: "Installing AZ CLI from Microsoft repo..."
 
-- name: Add Microsoft Package Repository Key
-  apt_key:
-    url: https://packages.microsoft.com/keys/microsoft.asc
+- name: Install prerequisites for keyrings
+  apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
     state: present
+    update_cache: yes
 
-- name: Add Microsoft Package Repository
+- name: Ensure /etc/apt/keyrings exists
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Add Microsoft signing key (keyring)
+  ansible.builtin.shell: |
+    set -euo pipefail
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /etc/apt/keyrings/microsoft.gpg
+  args:
+    executable: /bin/bash
+    creates: /etc/apt/keyrings/microsoft.gpg
+
+- name: Add Microsoft Azure CLI repo (use correct distro codename)
   apt_repository:
-    repo: 'deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main'
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ {{ ansible_distribution_release }} main"
     state: present
     update_cache: yes
 
 - name: Install Microsoft Azure CLI
   apt:
-    name: azure-cli={{ azcli_version }}
+    name: "azure-cli={{ azcli_version }}"
     state: present
     update_cache: yes
+
 
 - name: Add -=connectedk8s=- extension
   ansible.builtin.shell: az extension add --name connectedk8s

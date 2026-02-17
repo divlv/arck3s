@@ -32,7 +32,7 @@
 
 - name: Install Microsoft Azure CLI
   apt:
-    name: "azure-cli={{ azcli_version }}"
+    name: azure-cli
     state: present
     update_cache: yes
 

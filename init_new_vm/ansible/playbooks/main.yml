@@ -9,5 +9,6 @@
   tasks:
     - ansible.builtin.import_tasks: systemtune.yml
     # - ansible.builtin.import_tasks: googledns.yml
+    - ansible.builtin.import_tasks: k3sconfig.yml
     - ansible.builtin.import_tasks: autoexec_bat.yml
     - ansible.builtin.import_tasks: reboot.yml

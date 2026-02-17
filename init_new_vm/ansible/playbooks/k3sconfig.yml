@@ -5,21 +5,18 @@
   apt_key:
     url: https://packages.microsoft.com/keys/microsoft.asc
     state: present
-  when: azcli_versions_match.rc != 0
 
 - name: Add Microsoft Package Repository
   apt_repository:
     repo: 'deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main'
     state: present
     update_cache: yes
-  when: azcli_versions_match.rc != 0
 
 - name: Install Microsoft Azure CLI
   apt:
     name: azure-cli={{ azcli_version }}
     state: present
     update_cache: yes
-  when: azcli_versions_match.rc != 0
 
 - name: Add -=connectedk8s=- extension
   ansible.builtin.shell: az extension add --name connectedk8s
